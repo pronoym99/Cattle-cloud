@@ -20,8 +20,7 @@ def check_if_exists(sql_connector, seller_id, customer_id, livestock_id):
     return False
   else:
     # Customer may be buying cattle for the very first time so need to check for a valid mapping in the registration table
-    sell_check_to_execute = 'select exists(select regid from registration where userid = {} and livestockid={})'.format(
-        seller_id, livestock_id)
+    sell_check_to_execute = f'select exists(select regid from registration where userid = {seller_id} and livestockid={livestock_id})'
     for row in sql_connector.execute(sell_check_to_execute):
       flag = row[0]
 
@@ -44,13 +43,13 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
 
     # First obtain phone nos. of both the parties
     rows = sql_connector.execute(
-        'select phone from user where userid={} or userid={}'.format(seller_id, customer_id)).fetchall()
+        f'select phone from user where userid={seller_id} or userid={customer_id}').fetchall()
     sell_phone, cust_phone = '+91{}'.format(
         rows[0][0]), '+91{}'.format(rows[1][0])
 
     regid_to_affect = 0
     # Figure out which registration id will be changing irrespective of transaction status
-    for row in sql_connector.execute('select regid from registration where userid={} and livestockid={}'.format(seller_id, livestock_id)):
+    for row in sql_connector.execute(f'select regid from registration where userid={seller_id} and livestockid={livestock_id}'):
       regid_to_affect = row[0]
 
     transaction_possibility = check_if_exists(
