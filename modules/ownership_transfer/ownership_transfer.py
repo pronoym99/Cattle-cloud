@@ -24,10 +24,7 @@ def check_if_exists(sql_connector, seller_id, customer_id, livestock_id):
     for row in sql_connector.execute(sell_check_to_execute):
       flag = row[0]
 
-    if flag:
-      return True
-    else:
-      return False
+    return bool(flag)
 
 
 def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
