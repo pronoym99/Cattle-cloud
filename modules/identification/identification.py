@@ -3,7 +3,7 @@ from keras.models import load_model
 from PIL import Image, ImageOps
 
 # Load the model
-model = load_model('cattle_identification_keras_model.h5')
+model = load_model("cattle_identification_keras_model.h5")
 
 # Create the array of the right shape to feed into the keras model
 # The 'length' or number of images you can put into the array is
