@@ -41,8 +41,7 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
         rows = sql_connector.execute(
             f"select phone from user where userid={seller_id} or userid={customer_id}"
         ).fetchall()
-        sell_phone, cust_phone = "+91{}".format(rows[0][0]), "+91{}".format(
-            rows[1][0])
+        sell_phone, cust_phone = f"+91{rows[0][0]}", f"+91{rows[1][0]}"
 
         regid_to_affect = 0
         # Figure out which registration id will be changing irrespective of transaction status
@@ -57,19 +56,11 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
         if transaction_possibility:
             # Create a log in the transaction table
 
-            success_txn_to_execute = 'insert into transactions (txntime, txnstatus, regid, seller_id, customer_id, livestock_id) values("{}","{}","{}","{}","{}","{}")'.format(
-                datetime.now().astimezone(indian),
-                "true",
-                regid_to_affect,
-                seller_id,
-                customer_id,
-                livestock_id,
-            )
+            success_txn_to_execute = f'insert into transactions (txntime, txnstatus, regid, seller_id, customer_id, livestock_id) values("{datetime.now().astimezone(indian)}","true","{regid_to_affect}","{seller_id}","{customer_id}","{livestock_id}")'
             sql_connector.execute(success_txn_to_execute)
 
             # Change the userid in the registration table for the same livestockid
-            user_change_to_execute = 'update registration set userid="{}" where userid="{}" and livestockid="{}"'.format(
-                customer_id, seller_id, livestock_id)
+            user_change_to_execute = f'update registration set userid="{customer_id}" where userid="{seller_id}" and livestockid="{livestock_id}"'
             sql_connector.execute(user_change_to_execute)
 
             # Change the livestock_id's address to that of the customer_id
@@ -77,9 +68,7 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
                     "select address from user where userid={}".format(
                         customer_id)):
                 addr = row[0]
-            addr_change_to_execute = (
-                'update livestock set address="{}" where livestockid="{}"'.
-                format(addr, livestock_id))
+            addr_change_to_execute = f'update livestock set address="{addr}" where livestockid="{livestock_id}"'
             sql_connector.execute(addr_change_to_execute)
 
             # Start informing the concerned parties
@@ -111,14 +100,7 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
 
         else:
             # Create a log in the transaction table even if the transaction is bound to fail
-            fail_txn_to_execute = 'insert into transactions (txntime, txnstatus, regid, seller_id, customer_id, livestock_id) values("{}","{}","{}","{}","{}","{}")'.format(
-                datetime.now().astimezone(indian),
-                "false",
-                regid_to_affect,
-                seller_id,
-                customer_id,
-                livestock_id,
-            )
+            fail_txn_to_execute = 'insert into transactions (txntime, txnstatus, regid, seller_id, customer_id, livestock_id) values("{datetime.now().astimezone(indian)}","false","{regid_to_affect}","{seller_id}","{customer_id}","{livestock_id}")'
             sql_connector.execute(fail_txn_to_execute)
 
             # Start informing the concerned parties
