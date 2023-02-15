@@ -89,31 +89,16 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             # Inform the seller nonetheless
             # Print message sids to indicate transaction success
 
-            transact_success_msg_body = "Successful: Ownership of livestock id {} transferred from user id {} to user id {} at {}.".format(
-                livestock_id, seller_id, customer_id,
-                datetime.now().astimezone(indian))
-            message_to_authority = client.messages.create(
-                body=transact_success_msg_body,
-                from_=global_comm_phone,
-                to=authority_phone,
-            )
+            transact_success_msg_body = f"Successful: Ownership of livestock id {livestock_id} transferred from user id {seller_id} to user id {customer_id} at {datetime.now().astimezone(indian)}."
+            message_to_authority = client.messages.create(body=transact_success_msg_body, from_=global_comm_phone, to=authority_phone)
             print(message_to_authority.sid)
 
-            sell_success_msg_body = "Ownership of livestock id {} has been transferred to user id {} from your account".format(
-                livestock_id, customer_id)
-            message_to_seller = client.messages.create(
-                body=sell_success_msg_body,
-                from_=global_comm_phone,
-                to=sell_phone)
+            sell_success_msg_body = f"Ownership of livestock id {livestock_id} has been transferred to user id {customer_id} from your account"
+            message_to_seller = client.messages.create(body=sell_success_msg_body, from_=global_comm_phone, to=sell_phone)
             print(message_to_seller.sid)
 
-            cust_success_msg_body = (
-                "Ownership of livestock id {} received from user id {}".format(
-                    livestock_id, seller_id))
-            message_to_customer = client.messages.create(
-                body=cust_success_msg_body,
-                from_=global_comm_phone,
-                to=cust_phone)
+            cust_success_msg_body = f"Ownership of livestock id {livestock_id} received from user id {seller_id}"
+            message_to_customer = client.messages.create(body=cust_success_msg_body, from_=global_comm_phone, to=cust_phone)
             print(message_to_customer.sid)
 
         else:
@@ -134,9 +119,6 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             # Inform the seller nonetheless
             # Print message sids to indicate transaction success
 
-            sell_fail_msg_body = "Failed: Ownership transferr of livestock id {} from your account couldn't be carried out successfully. Refer website for details.".format(
-                livestock_id)
-            message_to_seller = client.messages.create(body=sell_fail_msg_body,
-                                                       from_=global_comm_phone,
-                                                       to=sell_phone)
+            sell_fail_msg_body = f"Failed: Ownership transferr of livestock id {livestock_id} from your account couldn't be carried out successfully. Refer website for details."
+            message_to_seller = client.messages.create(body=sell_fail_msg_body, from_=global_comm_phone, to=sell_phone)
             print(message_to_seller.sid)
