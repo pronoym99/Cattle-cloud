@@ -9,10 +9,10 @@ from twilio.rest import Client
 load_dotenv()
 
 # Set timezone for later use
-indian = timezone("Asia/Kolkata")
+indian = timezone('Asia/Kolkata')
 
 # Connect to your database
-conn = sqlite3.connect(r"D:\PRONOY\prototype.db")
+conn = sqlite3.connect('../../data/db/cattle_cloud.db')
 
 
 def check_if_exists(sql_connector, seller_id, customer_id, livestock_id):
