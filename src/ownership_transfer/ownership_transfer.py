@@ -65,7 +65,8 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             sql_connector.execute(user_change_to_execute)
 
             # Change the livestock_id's address to that of the customer_id
-            for row in conn.execute(f'select address from user where userid={customer_id}'):
+            for row in conn.execute(
+                    f"select address from user where userid={customer_id}"):
                 addr = row[0]
             addr_change_to_execute = f'update livestock set address="{addr}" where livestockid="{livestock_id}"'
             sql_connector.execute(addr_change_to_execute)
