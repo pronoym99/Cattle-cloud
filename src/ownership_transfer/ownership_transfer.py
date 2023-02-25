@@ -1,4 +1,5 @@
 import os
+import sqlite3
 from datetime import datetime
 
 # Always use .env files for storing sensitive information for a given project instance
