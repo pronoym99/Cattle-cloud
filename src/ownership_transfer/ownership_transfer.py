@@ -57,7 +57,8 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             sql_connector.execute(user_change_to_execute)
 
             # Change the livestock_id's address to that of the customer_id
-            for row in conn.execute(f'select address from user where userid={customer_id}'):
+            for row in conn.execute(
+                    f"select address from user where userid={customer_id}"):
                 addr = row[0]
             addr_change_to_execute = f'update livestock set address="{addr}" where livestockid="{livestock_id}"'
             sql_connector.execute(addr_change_to_execute)
@@ -106,13 +107,13 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             print(message_to_seller.sid)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     load_dotenv()
 
     # Set timezone for later use
-    indian = timezone('Asia/Kolkata')
+    indian = timezone("Asia/Kolkata")
 
     # Connect to your database
-    with sqlite3.connect('../../prototype.db') as conn:
+    with sqlite3.connect("../../prototype.db") as conn:
         # Perform operations here
         pass
