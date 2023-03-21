@@ -1,4 +1,5 @@
 import os
+import sqlite3
 from datetime import datetime
 
 # Always use .env files for storing sensitive information for a given project instance
@@ -20,7 +21,7 @@ def check_if_exists(sql_connector, seller_id, customer_id, livestock_id):
         return False
     else:
         # Customer may be buying cattle for the very first time so need to check for a valid mapping in the registration table
-        sell_check_to_execute = f"select exists(select regid from registration where userid = {seller_id} and livestockid={livestock_id})"
+        sell_check_to_execute = f"select exists(select regid from registration where userid = {seller_id} and livestockid = {livestock_id})"
         for row in sql_connector.execute(sell_check_to_execute):
             flag = row[0]
 
@@ -111,3 +112,15 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
                                                        from_=global_comm_phone,
                                                        to=sell_phone)
             print(message_to_seller.sid)
+
+
+if __name__ == '__main__':
+    load_dotenv()
+
+    # Set timezone for later use
+    indian = timezone('Asia/Kolkata')
+
+    # Connect to your database
+    with sqlite3.connect('../../cattle_cloud.db') as conn:
+        # Perform operations here
+        pass
