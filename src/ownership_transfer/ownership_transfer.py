@@ -10,10 +10,10 @@ from twilio.rest import Client
 load_dotenv()
 
 # Set timezone for later use
-indian = timezone('Asia/Kolkata')
+indian = timezone("Asia/Kolkata")
 
 # Connect to your database
-conn = sqlite3.connect('../../data/db/cattle_cloud.db')
+conn = sqlite3.connect("../../data/db/cattle_cloud.db")
 
 
 def check_if_exists(sql_connector, seller_id, customer_id, livestock_id):
@@ -47,12 +47,13 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
         regid_to_affect = 0
         # Figure out which registration id will be changing irrespective of transaction status
         for row in sql_connector.execute(
-                f"select regid from registration where userid={seller_id} and livestockid={livestock_id}"
+            f"select regid from registration where userid={seller_id} and livestockid={livestock_id}"
         ):
             regid_to_affect = row[0]
 
-        transaction_possibility = check_if_exists(sql_connector, seller_id,
-                                                  customer_id, livestock_id)
+        transaction_possibility = check_if_exists(
+            sql_connector, seller_id, customer_id, livestock_id
+        )
 
         if transaction_possibility:
             # Create a log in the transaction table
@@ -65,7 +66,9 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             sql_connector.execute(user_change_to_execute)
 
             # Change the livestock_id's address to that of the customer_id
-            for row in conn.execute(f'select address from user where userid={customer_id}'):
+            for row in conn.execute(
+                f"select address from user where userid={customer_id}"
+            ):
                 addr = row[0]
             addr_change_to_execute = f'update livestock set address="{addr}" where livestockid="{livestock_id}"'
             sql_connector.execute(addr_change_to_execute)
@@ -85,16 +88,14 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
 
             sell_success_msg_body = f"Ownership of livestock id {livestock_id} has been transferred to user id {customer_id} from your account"
             message_to_seller = client.messages.create(
-                body=sell_success_msg_body,
-                from_=global_comm_phone,
-                to=sell_phone)
+                body=sell_success_msg_body, from_=global_comm_phone, to=sell_phone
+            )
             print(message_to_seller.sid)
 
             cust_success_msg_body = f"Ownership of livestock id {livestock_id} received from user id {seller_id}"
             message_to_customer = client.messages.create(
-                body=cust_success_msg_body,
-                from_=global_comm_phone,
-                to=cust_phone)
+                body=cust_success_msg_body, from_=global_comm_phone, to=cust_phone
+            )
             print(message_to_customer.sid)
 
         else:
@@ -108,19 +109,19 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             # Print message sids to indicate transaction success
 
             sell_fail_msg_body = f"Failed: Ownership transferr of livestock id {livestock_id} from your account couldn't be carried out successfully. Refer website for details."
-            message_to_seller = client.messages.create(body=sell_fail_msg_body,
-                                                       from_=global_comm_phone,
-                                                       to=sell_phone)
+            message_to_seller = client.messages.create(
+                body=sell_fail_msg_body, from_=global_comm_phone, to=sell_phone
+            )
             print(message_to_seller.sid)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     load_dotenv()
 
     # Set timezone for later use
-    indian = timezone('Asia/Kolkata')
+    indian = timezone("Asia/Kolkata")
 
     # Connect to your database
-    with sqlite3.connect('../../cattle_cloud.db') as conn:
+    with sqlite3.connect("../../cattle_cloud.db") as conn:
         # Perform operations here
         pass
