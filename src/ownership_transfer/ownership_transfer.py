@@ -107,7 +107,7 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             # Inform the seller nonetheless
             # Print message sids to indicate transaction success
 
-            sell_fail_msg_body = f'Failed: Ownership transferr of livestock id {livestock_id} from your account couldn't be carried out successfully. Refer website for details.'
+            sell_fail_msg_body = f"Failed: Ownership transferr of livestock id {livestock_id} from your account couldn't be carried out successfully. Refer website for details."
             message_to_seller = client.messages.create(
                 body=sell_fail_msg_body, from_=global_comm_phone, to=sell_phone
             )
