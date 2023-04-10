@@ -21,8 +21,8 @@ def check_if_exists(sql_connector, seller_id, customer_id, livestock_id):
         return False
     else:
         # Customer may be buying cattle for the very first time so need to check for a valid mapping in the registration table
-        sell_check_to_execute = f"select exists(select regid from registration where userid = {seller_id} and livestockid = {livestock_id})"
-        for row in sql_connector.execute(sell_check_to_execute):
+        sell_check_to_execute = 'select exists(select regid from registration where userid = %s and livestockid = %s;'
+        for row in sql_connector.execute(sell_check_to_execute, (seller_id, livestock_id)):
             flag = row[0]
 
         return bool(flag)
@@ -47,7 +47,8 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
         regid_to_affect = 0
         # Figure out which registration id will be changing irrespective of transaction status
         for row in sql_connector.execute(
-                f"select regid from registration where userid={seller_id} and livestockid={livestock_id}"
+                'select regid from registration where userid = %s and livestockid = %s;',
+                (customer_id, seller_id)
         ):
             regid_to_affect = row[0]
 
@@ -61,14 +62,14 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             sql_connector.execute(success_txn_to_execute)
 
             # Change the userid in the registration table for the same livestockid
-            user_change_to_execute = f'update registration set userid="{customer_id}" where userid="{seller_id}" and livestockid="{livestock_id}"'
-            sql_connector.execute(user_change_to_execute)
+            user_change_to_execute = 'update registration set userid = %s where userid = %s and livestockid = %s;'
+            sql_connector.execute(user_change_to_execute, (customer_id, seller_id, livestock_id))
 
             # Change the livestock_id's address to that of the customer_id
-            for row in conn.execute(f'select address from user where userid={customer_id}'):
+            for row in conn.execute('select address from user where userid = %s;', (customer_id,)):
                 addr = row[0]
-            addr_change_to_execute = f'update livestock set address="{addr}" where livestockid="{livestock_id}"'
-            sql_connector.execute(addr_change_to_execute)
+            addr_change_to_execute = 'update livestock set address = %s where livestockid = %s;'
+            sql_connector.execute(addr_change_to_execute, (addr, livestock_id))
 
             # Start informing the concerned parties
             # Inform the Governing authority and the customer only if the transaction is successful
