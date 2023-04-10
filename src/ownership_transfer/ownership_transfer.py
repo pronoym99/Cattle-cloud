@@ -10,10 +10,10 @@ from twilio.rest import Client
 load_dotenv()
 
 # Set timezone for later use
-indian = timezone('Asia/Kolkata')
+indian = timezone("Asia/Kolkata")
 
 # Connect to your database
-conn = sqlite3.connect('../../data/db/cattle_cloud.db')
+conn = sqlite3.connect("../../data/db/cattle_cloud.db")
 
 
 def check_if_exists(sql_connector, seller_id, customer_id, livestock_id):
@@ -21,8 +21,10 @@ def check_if_exists(sql_connector, seller_id, customer_id, livestock_id):
         return False
     else:
         # Customer may be buying cattle for the very first time so need to check for a valid mapping in the registration table
-        sell_check_to_execute = 'select exists(select regid from registration where userid = %s and livestockid = %s;'
-        for row in sql_connector.execute(sell_check_to_execute, (seller_id, livestock_id)):
+        sell_check_to_execute = "select exists(select regid from registration where userid = %s and livestockid = %s;"
+        for row in sql_connector.execute(
+            sell_check_to_execute, (seller_id, livestock_id)
+        ):
             flag = row[0]
 
         return bool(flag)
@@ -47,13 +49,14 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
         regid_to_affect = 0
         # Figure out which registration id will be changing irrespective of transaction status
         for row in sql_connector.execute(
-                'select regid from registration where userid = %s and livestockid = %s;',
-                (customer_id, seller_id)
+            "select regid from registration where userid = %s and livestockid = %s;",
+            (customer_id, seller_id),
         ):
             regid_to_affect = row[0]
 
-        transaction_possibility = check_if_exists(sql_connector, seller_id,
-                                                  customer_id, livestock_id)
+        transaction_possibility = check_if_exists(
+            sql_connector, seller_id, customer_id, livestock_id
+        )
 
         if transaction_possibility:
             # Create a log in the transaction table
@@ -62,13 +65,19 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             sql_connector.execute(success_txn_to_execute)
 
             # Change the userid in the registration table for the same livestockid
-            user_change_to_execute = 'update registration set userid = %s where userid = %s and livestockid = %s;'
-            sql_connector.execute(user_change_to_execute, (customer_id, seller_id, livestock_id))
+            user_change_to_execute = "update registration set userid = %s where userid = %s and livestockid = %s;"
+            sql_connector.execute(
+                user_change_to_execute, (customer_id, seller_id, livestock_id)
+            )
 
             # Change the livestock_id's address to that of the customer_id
-            for row in conn.execute('select address from user where userid = %s;', (customer_id,)):
+            for row in conn.execute(
+                "select address from user where userid = %s;", (customer_id,)
+            ):
                 addr = row[0]
-            addr_change_to_execute = 'update livestock set address = %s where livestockid = %s;'
+            addr_change_to_execute = (
+                "update livestock set address = %s where livestockid = %s;"
+            )
             sql_connector.execute(addr_change_to_execute, (addr, livestock_id))
 
             # Start informing the concerned parties
@@ -86,16 +95,14 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
 
             sell_success_msg_body = f"Ownership of livestock id {livestock_id} has been transferred to user id {customer_id} from your account"
             message_to_seller = client.messages.create(
-                body=sell_success_msg_body,
-                from_=global_comm_phone,
-                to=sell_phone)
+                body=sell_success_msg_body, from_=global_comm_phone, to=sell_phone
+            )
             print(message_to_seller.sid)
 
             cust_success_msg_body = f"Ownership of livestock id {livestock_id} received from user id {seller_id}"
             message_to_customer = client.messages.create(
-                body=cust_success_msg_body,
-                from_=global_comm_phone,
-                to=cust_phone)
+                body=cust_success_msg_body, from_=global_comm_phone, to=cust_phone
+            )
             print(message_to_customer.sid)
 
         else:
@@ -109,19 +116,19 @@ def execute_transaction(sql_connector, seller_id, customer_id, *livestock_ids):
             # Print message sids to indicate transaction success
 
             sell_fail_msg_body = f"Failed: Ownership transferr of livestock id {livestock_id} from your account couldn't be carried out successfully. Refer website for details."
-            message_to_seller = client.messages.create(body=sell_fail_msg_body,
-                                                       from_=global_comm_phone,
-                                                       to=sell_phone)
+            message_to_seller = client.messages.create(
+                body=sell_fail_msg_body, from_=global_comm_phone, to=sell_phone
+            )
             print(message_to_seller.sid)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     load_dotenv()
 
     # Set timezone for later use
-    indian = timezone('Asia/Kolkata')
+    indian = timezone("Asia/Kolkata")
 
     # Connect to your database
-    with sqlite3.connect('../../cattle_cloud.db') as conn:
+    with sqlite3.connect("../../cattle_cloud.db") as conn:
         # Perform operations here
         pass
