@@ -6,8 +6,8 @@ from PIL import Image, ImageOps
 model = load_model("../../models/cattle_identification_keras_model.h5")
 
 # Load the file containing class labels
-with open('labels.txt', 'r') as labels:
-  cattle_classes = labels.readlines()
+with open("labels.txt", "r") as labels:
+    cattle_classes = labels.readlines()
 
 # Create the array of the right shape to feed into the keras model
 # The 'length' or number of images you can put into the array is
@@ -30,4 +30,4 @@ data[0] = normalized_image_array
 
 # run the inference
 prediction = model.predict(data)
-print(f'Class detected: {cattle_classes[np.argmax(prediction)]}')
+print(f"Class detected: {cattle_classes[np.argmax(prediction)]}")
