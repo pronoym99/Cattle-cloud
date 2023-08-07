@@ -30,4 +30,5 @@ data[0] = normalized_image_array
 
 # run the inference
 prediction = model.predict(data)
-print(f"Class detected: {cattle_classes[np.argmax(prediction)]}")
+class_detected = cattle_classes[np.argmax(prediction)].rstrip('\n')
+print(f"Class detected: {class_detected}")
