@@ -56,7 +56,7 @@ This will:
 Edit the image path in [identification.py](identification.py):
 
 ```python
-# In src/identification/identification.py
+# In identification.py
 from PIL import Image
 image = Image.open("path/to/your/image.jpg")
 ```
