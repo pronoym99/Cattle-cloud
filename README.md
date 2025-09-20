@@ -19,7 +19,7 @@ cd Cattle-cloud
 ### 2. (Optional) Create and activate a virtual environment
 
 
-Windows (PowerShell):
+#### Windows (PowerShell):
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
