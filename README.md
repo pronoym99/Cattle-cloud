@@ -40,9 +40,7 @@ pip install tensorflow pillow numpy
 ### 4. Run the identification script
 
 ```bash
-
 # Run from the repository root:
-
 python identification.py
 ```
 
