@@ -7,7 +7,7 @@
 Minimal Quick Start: Clone, Install, and Run the Keras-Based Identification Script.
 <br/>
 
-1. Clone the repository
+### 1. Clone the repository
 
 
 ```bash
@@ -16,7 +16,7 @@ cd Cattle-cloud
 ```
 
 
-2. (Optional) Create and activate a virtual environment
+### 2. (Optional) Create and activate a virtual environment
 
 
 Windows (PowerShell):
@@ -31,14 +31,14 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-3. Install required packages
+### 3. Install required packages
 
 ```bash
 pip install --upgrade pip
 pip install tensorflow pillow numpy
 ```
 
-4. Run the identification script
+### 4. Run the identification script
 
 Run from the repository root:
 ```bash
@@ -50,7 +50,7 @@ This will:
 - Use the sample image at [assets/Indian_bovine_breeds/Hallikar/Hallikar_4.jpg](assets/Indian_bovine_breeds/Hallikar/Hallikar_4.jpg)
 - Print the detected class (e.g., `Class detected: <BreedName>`)
 
-5. Use your own image
+### 5. Use your own image
 
 Edit the image path in [src/identification/identification.py](src/identification/identification.py):
 ```python
