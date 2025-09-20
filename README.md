@@ -15,7 +15,6 @@ git clone https://github.com/pronoym99/Cattle-cloud.git
 cd Cattle-cloud
 ```
 
-
 ### 2. (Optional) Create and activate a virtual environment
 
 
@@ -41,8 +40,10 @@ pip install tensorflow pillow numpy
 ### 4. Run the identification script
 
 ```bash
+
 # Run from the repository root:
-python src/identification/identification.py
+
+python identification.py
 ```
 
 This will:
@@ -52,9 +53,10 @@ This will:
 
 ### 5. Use your own image
 
-Edit the image path in [src/identification/identification.py](src/identification/identification.py):
+Edit the image path in [identification.py](identification.py):
+
 ```python
-# In src/identification/identification.py
+# In identification.py
 from PIL import Image
 image = Image.open("path/to/your/image.jpg")
 ```
