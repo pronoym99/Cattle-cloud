@@ -40,10 +40,14 @@ pip install tensorflow pillow numpy
 
 ### 4. Run the identification script
 
+
 ```bash
+
 # Run from the repository root:
-python src/identification/identification.py
+
+python identification.py
 ```
+
 
 This will:
 - Load the Keras model from [models/cattle_identification_keras_model.h5](models/cattle_identification_keras_model.h5)
@@ -52,7 +56,9 @@ This will:
 
 ### 5. Use your own image
 
-Edit the image path in [src/identification/identification.py](src/identification/identification.py):
+
+Edit the image path in [identification.py](identification.py):
+
 ```python
 # In src/identification/identification.py
 from PIL import Image

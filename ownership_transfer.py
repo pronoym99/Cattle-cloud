@@ -122,6 +122,6 @@ if __name__ == '__main__':
   indian = timezone('Asia/Kolkata')
 
   # Connect to your database
-  with sqlite3.connect('../../cattle_cloud.db') as conn:
+  with sqlite3.connect('cattle_cloud.db') as conn:
     # Perform operations here
     pass
