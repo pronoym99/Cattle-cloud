@@ -61,3 +61,60 @@ image = Image.open("path/to/your/image.jpg")
 ```
 
 Keep the preprocessing (224x224) unchanged.
+
+---
+
+### Database ER Diagram
+
+```mermaid
+erDiagram
+    USER {
+        int userid PK
+        int phone
+        string address
+    }
+
+    LIVESTOCK {
+        int livestockid PK
+        string address
+    }
+
+    REGISTRATION {
+        int regid PK
+        int userid FK
+        int livestockid FK
+    }
+
+    TRANSACTIONS {
+        int txnid PK
+        string txntime
+        bool txnstatus
+        int regid FK
+        int seller_id FK
+        int customer_id FK
+        int livestock_id FK
+    }
+
+    TRANSPORTATION {
+        int event_id PK
+        int livestock_id FK
+        int transporter_user_id FK
+        string destination_address
+        string transported_at
+    }
+
+    IDENTIFICATION_LOGS {
+        int log_id PK
+        string detected_class
+        string detected_at
+    }
+
+    USER ||--o{ REGISTRATION : "owns"
+    LIVESTOCK ||--o{ REGISTRATION : "registered via"
+    REGISTRATION ||--o{ TRANSACTIONS : "referenced in"
+    USER ||--o{ TRANSACTIONS : "sells"
+    USER ||--o{ TRANSACTIONS : "buys"
+    LIVESTOCK ||--o{ TRANSACTIONS : "transferred in"
+    LIVESTOCK ||--o{ TRANSPORTATION : "transported in"
+    USER ||--o{ TRANSPORTATION : "transports"
+```
