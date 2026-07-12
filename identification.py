@@ -1,6 +1,11 @@
+import os
+from datetime import datetime
+
 import numpy as np
 from keras.models import load_model
 from PIL import Image, ImageOps
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
 
 # Load the model
 model = load_model("../../models/cattle_identification_keras_model.h5")
@@ -32,3 +37,20 @@ data[0] = normalized_image_array
 prediction = model.predict(data)
 class_detected = cattle_classes[np.argmax(prediction)].rstrip('\n')
 print(f"Class detected: {class_detected}")
+
+try:
+    engine = create_engine(
+        os.getenv("DATABASE_URL", "sqlite:///cattle_cloud.db"), future=True
+    )
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "insert into identification_logs (detected_class, detected_at) values (:detected_class, :detected_at)"
+            ),
+            {
+                "detected_class": class_detected,
+                "detected_at": datetime.utcnow().isoformat(),
+            },
+        )
+except SQLAlchemyError:
+    pass
