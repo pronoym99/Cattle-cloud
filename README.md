@@ -102,13 +102,7 @@ erDiagram
         string destination_address
         string transported_at
     }
-
-    IDENTIFICATION_LOGS {
-        int log_id PK
-        string detected_class
-        string detected_at
-    }
-
+    
     USER ||--o{ REGISTRATION : "owns"
     LIVESTOCK ||--o{ REGISTRATION : "registered via"
     REGISTRATION ||--o{ TRANSACTIONS : "referenced in"
