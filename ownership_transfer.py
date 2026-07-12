@@ -45,21 +45,6 @@ class Transaction(Base):
     livestock_id = Column(Integer, nullable=False)
 
 
-def check_if_exists(db_session: Session, seller_id, customer_id, livestock_id):
-    if seller_id == customer_id:
-        return False
-
-    return (
-        db_session.query(Registration)
-        .filter(
-            Registration.userid == seller_id,
-            Registration.livestockid == livestock_id,
-        )
-        .first()
-        is not None
-    )
-
-
 def execute_transaction(db_session: Session, seller_id, customer_id, *livestock_ids):
     indian = timezone('Asia/Kolkata')
 
@@ -69,32 +54,43 @@ def execute_transaction(db_session: Session, seller_id, customer_id, *livestock_
     authority_phone = os.getenv('GOVT_AUTHORITY_PHONE')
     client = Client(account_sid, auth_token)
 
-    for livestock_id in livestock_ids:
-        users = (
-            db_session.query(User)
-            .filter(User.userid.in_([seller_id, customer_id]))
-            .all()
-        )
-        user_map = {user.userid: user for user in users}
-        if seller_id not in user_map or customer_id not in user_map:
-            continue
+    users = (
+        db_session.query(User)
+        .filter(User.userid.in_([seller_id, customer_id]))
+        .all()
+    )
+    user_map = {user.userid: user for user in users}
+    if seller_id not in user_map or customer_id not in user_map:
+        return
 
-        sell_phone = f'+91{user_map[seller_id].phone}'
-        cust_phone = f'+91{user_map[customer_id].phone}'
-
-        registration = (
+    registration_map = {
+        registration.livestockid: registration
+        for registration in (
             db_session.query(Registration)
             .filter(
                 Registration.userid == seller_id,
-                Registration.livestockid == livestock_id,
+                Registration.livestockid.in_(livestock_ids),
             )
-            .first()
+            .all()
         )
+    }
+    livestock_map = {
+        livestock.livestockid: livestock
+        for livestock in (
+            db_session.query(Livestock)
+            .filter(Livestock.livestockid.in_(livestock_ids))
+            .all()
+        )
+    }
+
+    for livestock_id in livestock_ids:
+        sell_phone = f'+91{user_map[seller_id].phone}'
+        cust_phone = f'+91{user_map[customer_id].phone}'
+
+        registration = registration_map.get(livestock_id)
         regid_to_affect = registration.regid if registration else 0
 
-        transaction_possibility = check_if_exists(
-            db_session, seller_id, customer_id, livestock_id
-        )
+        transaction_possibility = registration is not None and seller_id != customer_id
 
         if transaction_possibility:
             db_session.add(
@@ -112,7 +108,7 @@ def execute_transaction(db_session: Session, seller_id, customer_id, *livestock_
                 registration.userid = customer_id
 
             customer_user = user_map[customer_id]
-            livestock = db_session.get(Livestock, livestock_id)
+            livestock = livestock_map.get(livestock_id)
             if livestock is not None:
                 livestock.address = customer_user.address
 
