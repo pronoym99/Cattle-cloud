@@ -4,8 +4,19 @@ from datetime import datetime
 import numpy as np
 from keras.models import load_model
 from PIL import Image, ImageOps
-from sqlalchemy import create_engine, text
+from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+Base = declarative_base()
+
+
+class IdentificationLog(Base):
+    __tablename__ = "identification_logs"
+
+    log_id = Column(Integer, primary_key=True, autoincrement=True)
+    detected_class = Column(String, nullable=False)
+    detected_at = Column(String, nullable=False)
 
 # Load the model
 model = load_model("../../models/cattle_identification_keras_model.h5")
@@ -42,15 +53,16 @@ try:
     engine = create_engine(
         os.getenv("DATABASE_URL", "sqlite:///cattle_cloud.db"), future=True
     )
-    with engine.begin() as connection:
-        connection.execute(
-            text(
-                "insert into identification_logs (detected_class, detected_at) values (:detected_class, :detected_at)"
-            ),
-            {
-                "detected_class": class_detected,
-                "detected_at": datetime.utcnow().isoformat(),
-            },
+    SessionLocal = sessionmaker(
+        bind=engine, autoflush=False, autocommit=False, future=True
+    )
+    with SessionLocal() as session:
+        session.add(
+            IdentificationLog(
+                detected_class=class_detected,
+                detected_at=datetime.utcnow().isoformat(),
+            )
         )
+        session.commit()
 except SQLAlchemyError:
     pass

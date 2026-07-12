@@ -34,7 +34,7 @@ source .venv/bin/activate
 
 ```bash
 pip install --upgrade pip
-pip install tensorflow pillow numpy
+pip install tensorflow pillow numpy sqlalchemy
 ```
 
 ### 4. Run the identification script
