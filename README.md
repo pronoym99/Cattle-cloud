@@ -102,7 +102,7 @@ erDiagram
         string destination_address
         string transported_at
     }
-    
+
     USER ||--o{ REGISTRATION : "owns"
     LIVESTOCK ||--o{ REGISTRATION : "registered via"
     REGISTRATION ||--o{ TRANSACTIONS : "referenced in"
