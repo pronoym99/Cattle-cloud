@@ -104,8 +104,7 @@ def execute_transaction(db_session: Session, seller_id, customer_id, *livestock_
                 )
             )
 
-            if registration is not None:
-                registration.userid = customer_id
+            registration.userid = customer_id
 
             customer_user = user_map[customer_id]
             livestock = livestock_map.get(livestock_id)
